@@ -12,12 +12,16 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
-     "paths": {
+    "paths": {
       "~/*": ["./app/*"]
     },
     "noEmit": true,
     "module": "ESNext",
     "skipLibCheck": true,
     "typeRoots": ["./node_modules/@types"],
+     "allowSyntheticDefaultImports": true,
+     "moduleDetection": "force",
+     "useDefineForClassFields": true,
+     "verbatimModuleSyntax": true,
   },
 }
