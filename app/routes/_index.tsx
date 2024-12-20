@@ -1,14 +1,28 @@
 // ... previous imports
-import EnhancedChat from '~/components/EnhancedChat';
+import SettingsDialog from '~/components/SettingsDialog';
+import CollaborationStatus from '~/components/CollaborationStatus';
+import { useEffect } from 'react';
+import { loadSettings } from '~/stores/settings';
+import { initializeCollaboration } from '~/utils/collaboration';
 
 export default function Index() {
+  useEffect(() => {
+    loadSettings();
+    initializeCollaboration('default-project');
+  }, []);
+
   return (
     <div className="h-screen flex flex-col dark:bg-gray-900 dark:text-white">
-      {/* ... previous header and main content ... */}
+      <header className="h-12 border-b dark:border-gray-700 flex items-center justify-between px-4">
+        <h1 className="text-xl font-bold">Code Editor</h1>
+        <div className="flex items-center gap-2">
+          <CollaborationStatus />
+          <SettingsDialog />
+          {/* ... previous header buttons ... */}
+        </div>
+      </header>
       
-      <div className="fixed right-4 bottom-4">
-        <EnhancedChat />
-      </div>
+      {/* ... previous main content ... */}
     </div>
   );
 }
