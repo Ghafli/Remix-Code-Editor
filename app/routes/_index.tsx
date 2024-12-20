@@ -1,20 +1,28 @@
-import { SplitPanel } from "~/components/SplitPanel";
-import { FileTree } from "~/components/FileTree";
-import { Terminal } from "~/components/Terminal";
-import { ChatInterface } from "~/components/ChatInterface";
-import { Empty } from "~/components/Empty";
-import { useStore } from "nanostores";
-import { uiStore } from "~/stores/ui";
+// ... previous imports
+import SettingsDialog from '~/components/SettingsDialog';
+import CollaborationStatus from '~/components/CollaborationStatus';
+import { useEffect } from 'react';
+import { loadSettings } from '~/stores/settings';
+import { initializeCollaboration } from '~/utils/collaboration';
 
 export default function Index() {
-   const ui = useStore(uiStore);
+  useEffect(() => {
+    loadSettings();
+    initializeCollaboration('default-project');
+  }, []);
 
   return (
-    <div className="h-full flex flex-col">
-         <SplitPanel leftContent={<FileTree />} rightContent={
-           <Empty text="Select a file to start editing" />
-         } initialWidth="25%" minWidth={200} maxWidth={400}/>
-           <SplitPanel leftContent={<Terminal />} rightContent={<ChatInterface />} initialWidth="50%" minWidth={300} maxWidth={800} />
+    <div className="h-screen flex flex-col dark:bg-gray-900 dark:text-white">
+      <header className="h-12 border-b dark:border-gray-700 flex items-center justify-between px-4">
+        <h1 className="text-xl font-bold">Code Editor</h1>
+        <div className="flex items-center gap-2">
+          <CollaborationStatus />
+          <SettingsDialog />
+          {/* ... previous header buttons ... */}
+        </div>
+      </header>
+      
+      {/* ... previous main content ... */}
     </div>
   );
 }

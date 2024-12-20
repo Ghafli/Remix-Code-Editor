@@ -1,79 +1,58 @@
-import { useState, useRef, useEffect } from 'react';
-import { motion } from "framer-motion";
-import { useStore } from "nanostores";
-import { uiStore } from '../stores/ui';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { GripVertical } from 'lucide-react';
 
 interface SplitPanelProps {
-  leftContent: React.ReactNode;
-  rightContent: React.ReactNode;
-  initialWidth?: string;
-  minWidth?: number;
-  maxWidth?: number;
+  left: React.ReactNode;
+  right: React.ReactNode;
+  initialLeftWidth?: number;
 }
 
-export function SplitPanel({ leftContent, rightContent, initialWidth = '50%', minWidth = 200, maxWidth = 1000 }: SplitPanelProps) {
-  const [leftPanelWidth, setLeftPanelWidth] = useState(initialWidth);
+export default function SplitPanel({ 
+  left, 
+  right, 
+  initialLeftWidth = 250 
+}: SplitPanelProps) {
+  const [leftWidth, setLeftWidth] = useState(initialLeftWidth);
   const [isDragging, setIsDragging] = useState(false);
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const dividerRef = useRef<HTMLDivElement | null>(null);
-    const ui = useStore(uiStore);
-    
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-        if (!isDragging || !panelRef.current || !dividerRef.current) return;
-        const panelRect = panelRef.current.getBoundingClientRect();
-        const dividerRect = dividerRef.current.getBoundingClientRect();
-
-        const mousePosition = e.clientX - panelRect.left;
-        let width = mousePosition;
-
-        if (width < minWidth) {
-          width = minWidth;
-        }
-        if (width > maxWidth) {
-          width = maxWidth;
-        }
-
-
-       setLeftPanelWidth(`${width}px`)
-
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, minWidth, maxWidth]);
-
 
   const handleMouseDown = () => {
     setIsDragging(true);
   };
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setLeftWidth(e.clientX);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="flex h-full" ref={panelRef}>
-          <motion.div className="h-full overflow-y-hidden" style={{ width: leftPanelWidth }}  >
-               {leftContent}
-          </motion.div>
-           <div
-        ref={dividerRef}
-        className={`z-10 flex-0 flex items-center cursor-ew-resize select-none  ${ui.theme === "dark" ? 'bg-gray-700' : 'bg-gray-200'}  h-full`}
+    <div 
+      className="flex h-full"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <motion.div
+        style={{ width: leftWidth }}
+        className="h-full overflow-hidden"
+      >
+        {left}
+      </motion.div>
+      
+      <div
+        className="w-4 flex items-center justify-center cursor-col-resize hover:bg-gray-200 dark:hover:bg-gray-700"
         onMouseDown={handleMouseDown}
       >
-           <div className={`w-1 h-6  ${ui.theme === "dark" ? 'bg-gray-500' : 'bg-gray-400'} `} />
-       </div>
-          <motion.div className="flex-1 h-full overflow-y-hidden">
-            {rightContent}
-        </motion.div>
+        <GripVertical className="w-4 h-4" />
+      </div>
+      
+      <div className="flex-1 h-full overflow-hidden">
+        {right}
+      </div>
     </div>
   );
 }

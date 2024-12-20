@@ -1,83 +1,91 @@
-import { useState, useRef, useEffect } from 'react';
-import { useStore } from "nanostores";
-import { chatStore } from '../stores/chat';
-import { sendAiMessage } from '../utils/ai';
-import { uiStore } from '../stores/ui';
-import { Loading } from './Loading';
+import { useState } from 'react';
+import { useStore } from '@nanostores/react';
+import { chatStore, addMessage } from '~/stores/chat';
+import { MessageSquare, Send, X, Loader } from 'lucide-react';
 
-export function ChatInterface() {
-  const [newMessage, setNewMessage] = useState('');
-  const chat = useStore(chatStore);
-    const ui = useStore(uiStore);
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-   const [loading, setLoading] = useState(false)
+export default function ChatInterface() {
+  const [input, setInput] = useState('');
+  const { messages, isOpen, isLoading } = useStore(chatStore);
 
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input;
+    setInput('');
+    addMessage(userMessage, 'user');
+    
+    chatStore.set({ ...chatStore.get(), isLoading: true });
+    
+    try {
+      // Here we'll integrate with Claude API later
+      const response = "I'm here to help! (API integration pending)";
+      addMessage(response, 'assistant');
+    } catch (error) {
+      addMessage('Sorry, there was an error processing your request.', 'assistant');
+    } finally {
+      chatStore.set({ ...chatStore.get(), isLoading: false });
     }
-  }, [chat]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewMessage(e.target.value);
   };
 
-    const handleSendMessage = async (e:React.FormEvent) => {
-      e.preventDefault()
-        if (!newMessage) return;
-        setLoading(true);
-       chatStore.set([...chat, { role: 'user', content: newMessage }]);
-      try {
-       const response = await sendAiMessage(newMessage, chat);
-        if(response) {
-           chatStore.set(prev => [...prev, { role: 'assistant', content: response} ])
-        }
-      }
-      catch(e) {
-           chatStore.set(prev => [...prev, { role: 'assistant', content: "Something went wrong"} ])
-      }
-      finally {
-         setLoading(false)
-      }
-
-    setNewMessage('');
-  };
+  if (!isOpen) return null;
 
   return (
-    <div className="flex flex-col h-full">
-      <div
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4"
-      >
-        {chat.map((message, index) => (
-          <div key={index} className={`mb-3 ${message.role === 'user' ? 'text-right' : 'text-left'}`}>
+    <div className="w-80 bg-white dark:bg-gray-800 flex flex-col shadow-xl">
+      <div className="flex items-center justify-between px-4 py-2 border-b dark:border-gray-700">
+        <div className="flex items-center gap-2">
+          <MessageSquare className="w-4 h-4" />
+          <span className="font-medium">AI Assistant</span>
+        </div>
+        <button
+          onClick={() => chatStore.set({ ...chatStore.get(), isOpen: false })}
+          className="hover:text-gray-600 dark:hover:text-gray-300"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${
+              message.role === 'user' ? 'justify-end' : 'justify-start'
+            }`}
+          >
             <div
-              className={`inline-block rounded-lg py-2 px-4 ${message.role === 'user'
-                  ? `bg-primary text-white `
-                  : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 '}`}
+              className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                message.role === 'user'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700'
+              }`}
             >
               {message.content}
             </div>
           </div>
         ))}
-        {loading && <div className="mb-3 text-left">
-            <div className="inline-block rounded-lg py-2 px-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-             <Loading />
-            </div>
-          </div>
-        }
       </div>
-      <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex space-x-2">
+
+      <form onSubmit={handleSubmit} className="p-4 border-t dark:border-gray-700">
+        <div className="flex items-center gap-2">
           <input
             type="text"
-            value={newMessage}
-            onChange={handleInputChange}
-            placeholder="Type your message..."
-            className="flex-1 border rounded p-2 text-gray-800 dark:text-gray-200 focus:outline-none focus:border-primary dark:focus:border-primary bg-gray-100 dark:bg-gray-800"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="flex-1 px-3 py-2 rounded-lg border dark:border-gray-600 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Ask a question..."
+            disabled={isLoading}
           />
-          <button type="submit" className="bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded transition-colors duration-200 ease-in-out">
-            Send
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-50"
+          >
+            {isLoading ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </button>
         </div>
       </form>
