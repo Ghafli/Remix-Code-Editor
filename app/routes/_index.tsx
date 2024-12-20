@@ -1,20 +1,26 @@
-import { SplitPanel } from "~/components/SplitPanel";
-import { FileTree } from "~/components/FileTree";
-import { Terminal } from "~/components/Terminal";
-import { ChatInterface } from "~/components/ChatInterface";
-import { Empty } from "~/components/Empty";
-import { useStore } from "nanostores";
-import { uiStore } from "~/stores/ui";
+import { json } from '@remix-run/cloudflare';
+import type { LoaderFunction } from '@remix-run/cloudflare';
+import SplitPanel from '~/components/SplitPanel';
+import FileTree from '~/components/FileTree';
+import CodeEditor from '~/components/CodeEditor';
+
+export const loader: LoaderFunction = async () => {
+  return json({});
+};
 
 export default function Index() {
-   const ui = useStore(uiStore);
-
   return (
-    <div className="h-full flex flex-col">
-         <SplitPanel leftContent={<FileTree />} rightContent={
-           <Empty text="Select a file to start editing" />
-         } initialWidth="25%" minWidth={200} maxWidth={400}/>
-           <SplitPanel leftContent={<Terminal />} rightContent={<ChatInterface />} initialWidth="50%" minWidth={300} maxWidth={800} />
+    <div className="h-screen flex flex-col">
+      <header className="h-12 border-b flex items-center px-4">
+        <h1 className="text-xl font-bold">Code Editor</h1>
+      </header>
+      
+      <main className="flex-1 overflow-hidden">
+        <SplitPanel
+          left={<FileTree />}
+          right={<CodeEditor />}
+        />
+      </main>
     </div>
   );
 }
