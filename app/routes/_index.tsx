@@ -3,7 +3,7 @@ import { FileTree } from "~/components/FileTree";
 import { Terminal } from "~/components/Terminal";
 import { ChatInterface } from "~/components/ChatInterface";
 import { Empty } from "~/components/Empty";
-import { useStore } from "nanostores/react";
+import { useStore } from "nanostores";
 import { uiStore } from "~/stores/ui";
 
 export default function Index() {

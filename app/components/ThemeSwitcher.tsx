@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useStore } from "nanostores/react";
+import { useStore } from "nanostores";
 import { uiStore } from "../stores/ui";
 import { FaSun, FaMoon } from "react-icons/fa";
 

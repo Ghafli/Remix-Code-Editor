@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useStore } from "nanostores/react";
+import { useStore } from "nanostores";
 import { filesStore } from "../stores/files";
 import { uiStore } from "../stores/ui";
 import { FileContextMenu } from "./FileContextMenu";

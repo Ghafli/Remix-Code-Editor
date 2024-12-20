@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useStore } from "nanostores/react";
+import { useStore } from "nanostores";
 import { filesStore } from "../stores/files";
 import { v4 as uuid } from "uuid";
 import { FileItem } from "./FileItem";

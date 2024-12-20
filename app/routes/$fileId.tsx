@@ -5,7 +5,7 @@ import { ChatInterface } from "~/components/ChatInterface";
 import { CodeEditor } from "~/components/CodeEditor";
 import { DiffView } from "~/components/DiffView";
 import { useParams } from "@remix-run/react";
-import { useStore } from "nanostores/react";
+import { useStore } from "nanostores";
 import { uiStore } from "~/stores/ui";
 import { fileStore } from "~/stores/files";
 import { useEffect, useState } from "react";

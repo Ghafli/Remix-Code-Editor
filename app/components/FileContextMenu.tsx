@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useStore } from 'nanostores/react';
+import { useStore } from "nanostores";
 import { filesStore } from "../stores/files";
 import { uiStore } from "../stores/ui";
-import { Modal, Input } from "./Modal";
+import { Modal, Input } from "~/components/Modal";
 
 interface FileContextMenuProps {
     onClose: () => void;
