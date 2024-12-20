@@ -57,7 +57,7 @@ export default function Terminal() {
           </div>
         ))}
       </div>
-      
+      <div className="h-64 bg-gray-900 text-gray-100 flex flex-col"></div>
       <div className="flex items-center gap-2 px-4 py-2 bg-gray-800">
         <span className="text-green-400">$</span>
         <input
