@@ -5,7 +5,7 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "target": "ES2022",
     "strict": true,
@@ -15,13 +15,7 @@
     "paths": {
       "~/*": ["./app/*"]
     },
-    "noEmit": true,
-    "module": "ESNext",
     "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types"],
-     "allowSyntheticDefaultImports": true,
-     "moduleDetection": "force",
-     "useDefineForClassFields": true,
-     "verbatimModuleSyntax": true,
-  },
+    "noEmit": true
+  }
 }
