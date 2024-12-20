@@ -1,3 +1,10 @@
 import { atom } from 'nanostores';
 
-export const themeStore = atom<'light' | 'dark'>('light')
+export type Theme = 'light' | 'dark';
+
+export const themeStore = atom<Theme>('light');
+
+export const toggleTheme = () => {
+  themeStore.set(themeStore.get() === 'light' ? 'dark' : 'light');
+  document.documentElement.classList.toggle('dark');
+};

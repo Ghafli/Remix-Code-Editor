@@ -1,40 +1,48 @@
-import { ChatMessage } from "../stores/chat";
+import { editorStore } from '~/stores/editor';
+import { filesStore } from '~/stores/files';
 
-const API_URL = `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/meta/llama-2-7b-chat-int8`
-const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+interface AISuggestion {
+  code: string;
+  explanation: string;
+}
 
-export async function sendAiMessage(message: string, chat: ChatMessage[]): Promise<string | null> {
+export async function getCodeSuggestion(prompt: string): Promise<AISuggestion> {
+  const currentFile = filesStore.get().selectedFile;
+  const currentCode = editorStore.get().content;
+  
+  const context = {
+    file: currentFile,
+    code: currentCode,
+    prompt
+  };
 
-   if (!API_TOKEN) {
-      console.warn("Cloudflare API token not found")
-       return null;
-   }
-   const messages = chat.map((m) => ({
-       role: m.role,
-       content: m.content
-   }))
+  try {
+    const response = await fetch('/api/ai/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(context)
+    });
 
-  const payload = {
-      messages: [...messages, { role: 'user', content: message}]
-   }
-    try {
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-               'Authorization': `Bearer ${API_TOKEN}`,
-                "Content-Type": "application/json"
-            },
-          body: JSON.stringify(payload)
-        })
-        if(!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`)
-        }
-        const data = await response.json();
-       return data.result.response
-   }
-    catch (e:any) {
-      console.error("Error fetching AI response", e)
-       return null;
-    }
+    if (!response.ok) throw new Error('AI request failed');
+    return await response.json();
+  } catch (error) {
+    console.error('AI suggestion error:', error);
+    throw error;
+  }
+}
 
+export async function analyzeCode(code: string): Promise<string> {
+  try {
+    const response = await fetch('/api/ai/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+
+    if (!response.ok) throw new Error('Code analysis failed');
+    return await response.json();
+  } catch (error) {
+    console.error('Code analysis error:', error);
+    throw error;
+  }
 }

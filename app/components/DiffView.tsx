@@ -1,39 +1,36 @@
-import { useEffect, useState } from "react";
-import { diffLines } from "diff";
-import { useStore } from "nanostores";
-import { editorStore } from "../stores/editor";
-import { filesStore } from "../stores/files";
-import { uiStore } from "../stores/ui";
-
+import { useMemo } from 'react';
+import { calculateDiff } from '~/utils/diff';
 
 interface DiffViewProps {
-    fileId: string;
+  oldContent: string;
+  newContent: string;
 }
 
-export function DiffView({ fileId }: DiffViewProps) {
-  const editor = useStore(editorStore);
-    const files = useStore(filesStore);
-  const [diff, setDiff] = useState<any[]>([]);
-  const ui = useStore(uiStore);
-
-  useEffect(() => {
-    if (!fileId) return;
-      const file = files.find(f => f.id === fileId);
-        if (!file) return;
-      const current = editor.fileId === fileId ? editor.content : file.content;
-
-    const changes = diffLines(file.content, current);
-    setDiff(changes);
-  }, [fileId, editor, files, ui.theme]);
-
+export default function DiffView({ oldContent, newContent }: DiffViewProps) {
+  const diff = useMemo(() => calculateDiff(oldContent, newContent), [oldContent, newContent]);
 
   return (
-    <div className="h-full w-full overflow-y-auto p-4 text-sm font-mono whitespace-pre-wrap">
-      {diff.map((part:any, index:number) => (
-        <span key={index} style={{ backgroundColor: part.added ? 'rgba(0, 255, 0, 0.2)' : part.removed ? 'rgba(255, 0, 0, 0.2)' : 'transparent'}}>
-          {part.value}
-        </span>
-      ))}
+    <div className="font-mono text-sm">
+      <div className="flex items-center gap-4 p-2 border-b dark:border-gray-700">
+        <span className="text-green-500">+{diff.additions} additions</span>
+        <span className="text-red-500">-{diff.deletions} deletions</span>
+      </div>
+      <div className="p-4">
+        {diff.changes.map((change, index) => (
+          <pre
+            key={index}
+            className={`whitespace-pre-wrap ${
+              change.added
+                ? 'bg-green-100 dark:bg-green-900'
+                : change.removed
+                ? 'bg-red-100 dark:bg-red-900'
+                : ''
+            }`}
+          >
+            {change.value}
+          </pre>
+        ))}
+      </div>
     </div>
   );
 }

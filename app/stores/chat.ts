@@ -1,8 +1,33 @@
 import { atom } from 'nanostores';
 
-interface ChatMessage {
-    role: 'user' | 'assistant';
-    content: string;
+export interface ChatMessage {
+  id: string;
+  content: string;
+  role: 'user' | 'assistant';
+  timestamp: number;
 }
 
-export const chatStore = atom<ChatMessage[]>([])
+export interface ChatStore {
+  messages: ChatMessage[];
+  isOpen: boolean;
+  isLoading: boolean;
+}
+
+export const chatStore = atom<ChatStore>({
+  messages: [],
+  isOpen: false,
+  isLoading: false,
+});
+
+export const addMessage = (content: string, role: 'user' | 'assistant') => {
+  const store = chatStore.get();
+  chatStore.set({
+    ...store,
+    messages: [...store.messages, {
+      id: crypto.randomUUID(),
+      content,
+      role,
+      timestamp: Date.now(),
+    }],
+  });
+};
