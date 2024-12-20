@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from "@remix-run/react";
-import { useStore } from 'nanostores/react';
+import { useStore } from "nanostores";
 import { uiStore } from '../stores/ui';
 
 interface FileItemProps {

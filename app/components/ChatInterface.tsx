@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useStore } from 'nanostores/react';
+import { useStore } from "nanostores";
 import { chatStore } from '../stores/chat';
 import { sendAiMessage } from '../utils/ai';
 import { uiStore } from '../stores/ui';

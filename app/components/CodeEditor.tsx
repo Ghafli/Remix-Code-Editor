@@ -20,7 +20,7 @@ import {
   } from "@codemirror/lang-javascript";
   import { github } from "@uiw/codemirror-theme-github";
   import { useEffect, useRef } from "react";
-  import { useStore } from "nanostores/react";
+  import { useStore } from "nanostores";
   import { editorStore } from "../stores/editor";
   import { filesStore } from "../stores/files";
   import { uiStore } from "../stores/ui";
