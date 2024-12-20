@@ -1,9 +1,7 @@
-module.exports = {
-  serverDependenciesToBundle: [
-    "codemirror",
-    "nanostores/react",
-    "yjs",
-    "y-webrtc",
-    "y-indexeddb",
-  ],
-};
+export const serverDependenciesToBundle = [
+  "codemirror",
+  "nanostores/react",
+  "yjs",
+  "y-webrtc",
+  "y-indexeddb",
+];
