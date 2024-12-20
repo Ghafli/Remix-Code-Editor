@@ -1,3 +1,6 @@
+ /// <reference types="@remix-run/node" />
+/// <reference types="@cloudflare/workers-types" />
+
 module.exports = {
   future: {
     v3_relativeSplatPath: true,
