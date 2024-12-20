@@ -1,15 +1,15 @@
 import { atom } from 'nanostores';
+import type { EditorState } from '@codemirror/state';
 
-interface EditorState {
+export interface EditorStore {
   content: string;
-  fileId: string | null
+  language: string;
+  currentFile: string | null;
+  editorState?: EditorState;
 }
 
-export const editorStore = atom<EditorState>({
-    content: "",
-    fileId: null
+export const editorStore = atom<EditorStore>({
+  content: '',
+  language: 'javascript',
+  currentFile: null,
 });
-
-export const setEditorContent = (content: string, fileId: string) => {
-   editorStore.set({ content, fileId})
-}
